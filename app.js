@@ -27,10 +27,10 @@ app.use(corsMiddleware);
 app.use(express.static("./public")); // this is a built-in middleware function that serves static files from the public folder.
 // app.use(morgan('tiny'));
 
-app.get("/password", (req, res) => {
-    const myPassword = process.env.MY_PASSWORD;
-    res.send(myPassword);
-});
+// app.get("/password", (req, res) => {
+//     const myPassword = process.env.MY_PASSWORD;
+//     res.send(myPassword);
+// });
 
 app.use(router); // this line must be last before app.listen, apart from error handling middleware
 
