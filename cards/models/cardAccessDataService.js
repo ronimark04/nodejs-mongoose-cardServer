@@ -1,22 +1,6 @@
 const { throwError } = require('../../utils/handleErrors');
 const Card = require('./mongodb/Card');
 
-const createCard = async (newCard) => {
-    try {
-        let card = new Card(newCard);
-        card = await card.save();
-        return card;
-    } catch (error) {
-        return throwError("Mongoose", error);
-    }
-
-    const error = new Error("No other DB for this request");
-    error.status = 500;
-    return throwError("Database", error);
-};
-
-
-
 const getCards = async () => {
     try {
         let cards = await Card.find();
@@ -44,6 +28,16 @@ const getMyCards = async (userId) => {
     }
     catch (err) {
         return throwError("Mongoose", err);
+    }
+};
+
+const createCard = async (newCard) => {
+    try {
+        let card = new Card(newCard);
+        card = await card.save();
+        return card;
+    } catch (error) {
+        return throwError("Mongoose", error);
     }
 };
 

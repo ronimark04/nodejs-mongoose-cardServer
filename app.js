@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const { Card } = require('./cards/models/mongodb/Card');
 const PORT = process.env.PORT || 8181;
 const connectToDB = require('./DB/dbService');
-const cors = require('cors');
 const chalk = require('chalk');
 require('dotenv').config();
 const app = express();

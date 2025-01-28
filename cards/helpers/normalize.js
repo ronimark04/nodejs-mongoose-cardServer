@@ -16,5 +16,3 @@ const normalizeCard = async (card, userId) => {
 
 
 module.exports = { normalizeCard };
-
-// user.image?.url && user.image.url.trim() !== "" ? user.image.url : "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"

@@ -7,6 +7,40 @@ const validateCard = require('../validation/cardValidationService');
 
 const router = express.Router();
 
+// get all cards
+router.get("/", async (req, res) => {
+    try {
+        let cards = await getCards();
+        res.send(cards);
+    }
+    catch (err) {
+        return handleError(res, err.status || 400, err.message);
+    }
+});
+
+// get all my cards
+router.get("/my-cards", auth, async (req, res) => {
+    try {
+        const id = req.user._id;
+        let cards = await getMyCards(id);
+        res.send(cards);
+    } catch (error) {
+        return handleError(res, error.status || 400, error.message);
+    }
+});
+
+// get card by id
+router.get("/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        let card = await getCard(id);
+        res.send(card);
+    } catch (error) {
+        return handleError(res, error.status || 400, error.message);
+    }
+});
+
+// create new card
 router.post("/", auth, async (req, res) => {
     try {
         const userInfo = req.user; //taken from the auth function in authService.js. I think this is the verified token that contains the relevant user info (isAdmin, isBusiness, etc.)
@@ -26,41 +60,9 @@ router.post("/", auth, async (req, res) => {
     }
 });
 
-router.get("/my-cards", auth, async (req, res) => {
+// update card
+router.put("/:id", auth, async (req, res) => {
     try {
-        const { id } = req.body;
-        let cards = await getMyCards(id);
-        res.send(cards);
-    } catch (error) {
-        return handleError(res, error.status || 400, error.message);
-    }
-});
-
-router.get("/:id", async (req, res) => {
-    try {
-        const { id } = req.params;
-        let card = await getCard(id);
-        res.send(card);
-    } catch (error) {
-        return handleError(res, error.status || 400, error.message);
-    }
-});
-
-router.get("/", async (req, res) => {
-    try {
-        let cards = await getCards();
-        res.send(cards);
-    }
-    catch (err) {
-        return handleError(res, err.status || 400, err.message);
-    }
-});
-
-router.put("/:id", auth, async (req, res) => { // put updates entire card
-    try {
-        // const { id } = req.params;
-        // const newCard = req.body;
-        // let card = await updateCard(id, newCard);
         const userInfo = req.user;
         const newCard = req.body;
         const { id } = req.params;
@@ -82,7 +84,8 @@ router.put("/:id", auth, async (req, res) => { // put updates entire card
     }
 });
 
-router.patch("/:id", auth, async (req, res) => { // patch updates part of card. this is here to handle the like feature
+// like/unlike a card
+router.patch("/:id", auth, async (req, res) => {
     try {
         let { id } = req.params;
         let userId = req.user._id;
@@ -94,6 +97,7 @@ router.patch("/:id", auth, async (req, res) => { // patch updates part of card. 
     }
 });
 
+// delete card
 router.delete("/:id", auth, async (req, res) => {
     try {
         let { id } = req.params;
@@ -109,4 +113,4 @@ router.delete("/:id", auth, async (req, res) => {
     }
 });
 
-module.exports = router; // no need to export every function, just the router
+module.exports = router;

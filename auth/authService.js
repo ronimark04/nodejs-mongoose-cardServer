@@ -16,14 +16,12 @@ const auth = (req, res, next) => {
             return throwError("Authentication", error);
         }
 
-        req.user = userInfo; // if the token is valid, we add the verified token to the request object
+        req.user = userInfo; // If the token is valid, the decoded user information is attached to the req object
         return next(); // stop the function and move on to the next middleware
     }
     catch (error) {
         return handleError(res, 401, error.message);
     }
-
-    return handleError(res, 500, "No token generator found");
 };
 
 module.exports = auth;

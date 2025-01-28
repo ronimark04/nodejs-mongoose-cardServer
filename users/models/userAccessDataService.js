@@ -1,7 +1,6 @@
 const User = require('./mongodb/User');
 const { generateAuthToken } = require("../../auth/providers/jwt");
 const { throwError } = require('../../utils/handleErrors');
-const { create } = require('lodash');
 const { generatePassword, comparePasswords } = require('../helpers/bcrypt');
 
 
