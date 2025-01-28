@@ -6,7 +6,7 @@ const loginValidation = (user) => {
             .ruleset.pattern(
                 /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/
             )
-            .rule({ message: 'user "mail" mast be a valid mail' })
+            .rule({ message: 'Must be a valid email address' })
             .required(),
 
         password: Joi.string()
@@ -15,7 +15,7 @@ const loginValidation = (user) => {
             )
             .rule({
                 message:
-                    'user "password" must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a number and one of the following characters !@#$%^&*-',
+                    'Must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a number and one of the following characters !@#$%^&*-',
             })
             .required(),
     });

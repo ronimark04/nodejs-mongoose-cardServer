@@ -3,7 +3,6 @@ const { DEFAULT_VALIDATION } = require("../../../helpers/mongodb/mongooseValidat
 const { PHONE, EMAIL, URL } = require("../../../helpers/mongodb/mongooseValidators");
 const { image } = require("../../../helpers/mongodb/image");
 const { address } = require("../../../helpers/mongodb/address");
-const { name } = require("../../../helpers/mongodb/name");
 
 const cardSchema = new mongoose.Schema({
     title: DEFAULT_VALIDATION,
@@ -20,11 +19,11 @@ const cardSchema = new mongoose.Schema({
     bizNumber: {
         type: Number,
         required: true,
-        min: 1_000_000, // min 7 digits (minLength only works on strings)
-        max: 9_999_999 // max 7 digits. We can use underscore for readability
+        min: 1_000_000,
+        max: 9_999_999
     },
     likes: [String], // an array of strings
-    createAt: {
+    createdAt: {
         type: Date,
         default: Date.now
     },

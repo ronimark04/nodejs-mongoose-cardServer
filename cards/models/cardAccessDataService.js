@@ -1,22 +1,18 @@
-const { createError } = require('../../utils/handleErrors');
+const { throwError } = require('../../utils/handleErrors');
 const Card = require('./mongodb/Card');
-const config = require("config");
-
-const DB = config.get('DATABASE');
 
 const createCard = async (newCard) => {
-    if (DB === "MongoDB") {
-        try {
-            let card = new Card(newCard);
-            card = await card.save();
-            return card;
-        } catch (error) {
-            return createError("Mongoose", error);
-        }
+    try {
+        let card = new Card(newCard);
+        card = await card.save();
+        return card;
+    } catch (error) {
+        return throwError("Mongoose", error);
     }
+
     const error = new Error("No other DB for this request");
     error.status = 500;
-    return createError("Database", error);
+    return throwError("Database", error);
 };
 
 
@@ -27,7 +23,7 @@ const getCards = async () => {
         return cards;
     }
     catch (err) {
-        return createError("Mongoose", err);
+        return throwError("Mongoose", err);
     }
 };
 
@@ -37,7 +33,7 @@ const getCard = async (cardId) => {
         return card;
     }
     catch (err) {
-        return createError("Mongoose", err);
+        return throwError("Mongoose", err);
     }
 };
 
@@ -47,7 +43,7 @@ const getMyCards = async (userId) => {
         return cards;
     }
     catch (err) {
-        return createError("Mongoose", err);
+        return throwError("Mongoose", err);
     }
 };
 
@@ -57,7 +53,7 @@ const updateCard = async (cardId, newCard) => {
         return card;
     }
     catch (err) {
-        return createError("Mongoose", err);
+        return throwError("Mongoose", err);
     }
 };
 
@@ -67,7 +63,7 @@ const likeCard = async (cardId, userId) => {
         if (!card) { // if the card is not found in the database, throw an error
             const error = new Error("Card ID not found in database");
             error.status = 404;
-            return createError("Mongoose", error);
+            return throwError("Mongoose", error);
         };
         if (card.likes.includes(userId)) { //if the user has already liked the card, remove the like
             let newLikesArray = card.likes.filter(id => id !== userId);

@@ -1,5 +1,5 @@
 const { mongoose } = require("mongoose");
-const { DEFAULT_VALIDATION, PHONE, EMAIL } = require("../../../helpers/mongodb/mongooseValidators");
+const { PHONE, EMAIL } = require("../../../helpers/mongodb/mongooseValidators");
 const { image } = require("../../../helpers/mongodb/image");
 const { address } = require("../../../helpers/mongodb/address");
 const { name } = require("../../../helpers/mongodb/name");
@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
     },
     createdAt: {
         type: Date,
-        default: Date.now
+        default: new Date()
     }
 });
 

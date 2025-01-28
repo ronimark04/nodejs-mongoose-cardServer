@@ -1,21 +1,19 @@
-const { createError } = require("../../utils/handleErrors");
+const { throwError } = require("../../utils/handleErrors");
 const Card = require("../models/mongodb/Card");
-const _ = require("lodash");
 
 const generateBizNum = async () => {
-
-    let cardCount = await Card.countDocuments(); // get the number of  existing cards in the db
+    let cardCount = await Card.countDocuments();
     if (cardCount === 9_899_999) {
-        const error = new Error("Maximum number of cards in system reached");
+        const error = new Error("Reached maximum number of cards in system");
         error.status = 507;
-        return createError("MongoDB", error);
+        return throwError("MongoDB", error);
     }
 
     let bizNum;
     do {
-        bizNum = _.random(1_000_000, 9_999_999);
+        bizNum = Math.floor(Math.random() * (9_999_999 - 1_000_000 + 1)) + 1_000_000;
     }
-    while (await bizNumExists(bizNum)); // do while instead of while just to save a line of code
+    while (await bizNumExists(bizNum));
 
     return bizNum;
 };
@@ -29,9 +27,8 @@ const bizNumExists = async (bizNum) => {
     }
     catch (err) {
         err.status = 500;
-        return createError("MongoDB", err);
+        return throwError("MongoDB", err);
     }
-
 };
 
 module.exports = { generateBizNum };
