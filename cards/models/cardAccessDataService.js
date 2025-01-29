@@ -55,7 +55,7 @@ const likeCard = async (cardId, userId) => {
     try {
         let card = await Card.findById(cardId);
         if (!card) { // if the card is not found in the database, throw an error
-            const error = new Error("Card ID not found in database");
+            const error = new Error("Card not found in database");
             error.status = 404;
             return throwError("Mongoose", error);
         };

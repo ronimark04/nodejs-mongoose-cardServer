@@ -1,9 +1,9 @@
 const express = require('express');
-const { createCard, getCards, getCard, getMyCards, updateCard, likeCard } = require('../models/cardAccessDataService');
+const { createCard, getCards, getCard, getMyCards, updateCard, likeCard, deleteCard } = require('../models/cardAccessDataService');
 const auth = require('../../auth/authService');
 const { normalizeCard } = require('../helpers/normalize');
 const { handleError } = require('../../utils/handleErrors');
-const validateCard = require('../validation/cardValidationService');
+const { validateCard } = require('../validation/joi/joiValidation');
 
 const router = express.Router();
 
@@ -45,12 +45,11 @@ router.post("/", auth, async (req, res) => {
     try {
         const userInfo = req.user; //taken from the auth function in authService.js. I think this is the verified token that contains the relevant user info (isAdmin, isBusiness, etc.)
         if (!userInfo.isBusiness) { // if user is not a business user
-            return handleError(res, 403, "Only business users can create cards");
+            return handleError(res, 403, "Non business users cannot create cards");
         }
-        console.log("Request Body:", req.body);
         const { valErrorMessage } = validateCard(req.body);
         if (valErrorMessage !== "") {
-            return handleError(res, 400, "Validation " + valErrorMessage);
+            return handleError(res, 400, "Validation Error:" + valErrorMessage);
         }
         let card = await normalizeCard(req.body, userInfo._id);
         card = await createCard(card);
@@ -67,17 +66,18 @@ router.put("/:id", auth, async (req, res) => {
         const newCard = req.body;
         const { id } = req.params;
         const originalCard = await getCard(id);
+        const userId = originalCard.user_id.toString();
 
-        if (userInfo._id != originalCard.user_id && !userInfo.isAdmin) {
-            return handleError(res, 403, "Authorization Error: Only the user who created the card or an admin can update the card");
+        if (userInfo._id != userId && !userInfo.isAdmin) {
+            return handleError(res, 403, "Authorization Error: Only the creator of the card or an admin can edit it");
         }
-        const { valErrorMessage } = validateCard(req.body); // maybe doesn't need destructuring?
+        const { valErrorMessage } = validateCard(req.body);
         if (valErrorMessage !== "") {
-            return handleError(res, 400, "Validation" + valErrorMessage);
+            return handleError(res, 400, "Validation Error: " + valErrorMessage);
         }
         let card = await normalizeCard(newCard, userInfo._id);
         card = await updateCard(id, card);
-        res.send(card); // ?
+        res.send(card);
     }
     catch (err) {
         return handleError(res, 400, err.message);
@@ -102,11 +102,19 @@ router.delete("/:id", auth, async (req, res) => {
     try {
         let { id } = req.params;
         const userInfo = req.user;
-        if (userInfo._id != originalCard.user_id && !userInfo.isAdmin) {
+        const originalCard = await getCard(id);
+        const { bizNumber } = req.body;
+        const userId = originalCard.user_id.toString();
+
+        if (userInfo._id != userId && !userInfo.isAdmin) {
             return handleError(res, 403, "Authorization Error: Only the user who created the card or an admin can delete the card");
         }
-        let card = await deleteCard(id);
-        res.send(card);
+        if (userInfo._id === userId && bizNumber === originalCard.bizNumber) {
+            let card = await deleteCard(id);
+            res.send(card);
+        } else {
+            return handleError(res, 400, "Invalid business number provided");
+        }
     }
     catch (err) {
         return handleError(res, 400, err.message);
