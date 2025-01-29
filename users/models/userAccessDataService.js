@@ -6,10 +6,16 @@ const { generatePassword, comparePasswords } = require('../helpers/bcrypt');
 
 const registerUser = async (newUser) => {
     try {
+        const existingUser = await User.findOne({ email: newUser.email });
+        if (existingUser) {
+            const error = new Error("User already exists, please login");
+            error.status = 400;
+            return throwError("MongoDB", error);
+        }
         newUser.password = await generatePassword(newUser.password);
         let user = new User(newUser);
-        user = await user.save(); //.save is a mongoose method that saves the user to the database
-        lessInfoUser = { email: user.email, name: user.name, _id: user._id }; // we don't want to return the password, only partial info
+        user = await user.save();
+        lessInfoUser = { email: user.email, name: user.name, _id: user._id };
         return lessInfoUser;
     } catch (error) {
         return throwError("Mongoose", error);
@@ -41,7 +47,6 @@ const loginUser = async (email, password) => {
             error.status = 401;
             return throwError("Authentication", error);
         }
-
         const token = await generateAuthToken(userFromDB);
         return token;
     }
@@ -50,4 +55,13 @@ const loginUser = async (email, password) => {
     }
 }
 
-module.exports = { registerUser, getUser, loginUser };
+const updateUser = async (userId, updatedUser) => {
+    try {
+        let user = await User.findByIdAndUpdate(userId, updatedUser, { new: true });
+        return user;
+    } catch (err) {
+        return throwError("Mongoose", err);
+    }
+}
+
+module.exports = { registerUser, getUser, loginUser, updateUser };

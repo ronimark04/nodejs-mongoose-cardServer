@@ -22,4 +22,10 @@ const loginValidation = (user) => {
     return schema.validate(user);
 };
 
-module.exports = loginValidation;
+const validateLogin = (user) => {
+    const { error } = loginValidation(user);
+    if (error) return error.details[0].message;
+    return "";
+};
+
+module.exports = validateLogin;

@@ -7,7 +7,7 @@ const joiValidateCard = (card) => {
         title: Joi.string().min(2).max(256).required(),
         subtitle: Joi.string().min(2).max(256).required(),
         description: Joi.string().min(2).max(1024).required(),
-        phone: Joi.string().ruleset.regex(/0[0-9]{1,2}\-?\s?[0-9]{3}\s?[0-9]{4}/).rule({ message: "Must be a valid phone number" }).required(),
+        phone: Joi.string().ruleset.regex(/0[0-9]{2}\-?\s?[0-9]{3}\s?[0-9]{4}/).rule({ message: "Must be a valid phone number" }).required(),
         email: Joi.string().ruleset.pattern(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/).rule({ message: "Must be a valid email address" }).required(),
         web: Joi.string().ruleset.regex(urlRegex).rule({ message: "Must be a valid URL" }).allow(""),
         image: Joi.object().keys({
