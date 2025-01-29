@@ -58,7 +58,7 @@ router.put("/:id", auth, async (req, res) => {
         const { id } = req.params;
         const updatedUser = req.body;
         const userInfo = req.user;
-        if (id !== userInfo._id && !userInfo.isAdmin) {
+        if (id !== userInfo._id) {
             return handleError(res, 403, "Authorization Error: Only the user or an admin can edit the user's profile");
         }
         const valErrorMessage = validateUpdate(updatedUser);
