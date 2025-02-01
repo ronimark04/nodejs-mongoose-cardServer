@@ -1,6 +1,6 @@
 const auth = require('../../auth/authService');
 const { handleError } = require('../../utils/handleErrors');
-const { registerUser, getUser, loginUser, updateUser } = require('../models/userAccessDataService');
+const { registerUser, getUser, loginUser, updateUser, patchBusinessStatus, getUsers } = require('../models/userAccessDataService');
 const express = require('express');
 const validateLogin = require('../validation/joi/loginValidation');
 const validateRegistration = require('../validation/joi/registerValidation');
@@ -21,6 +21,22 @@ router.post("/", async (req, res) => {
         handleError(res, error.status || 400, error.message);
     }
 });
+
+// get all users
+router.get("/", auth, async (req, res) => {
+    try {
+        const userInfo = req.user;
+        console.log(userInfo.isAdmin);
+        if (!userInfo.isAdmin) {
+            handleError(res, 403, "Authorization Error: Non admin users are not authorized to access this information");
+        }
+        users = await getUsers();
+        res.send(users);
+    }
+    catch (error) {
+        handleError(res, error.status || 400, error.message);
+    }
+})
 
 // login
 router.post("/login", async (req, res) => {
@@ -59,7 +75,7 @@ router.put("/:id", auth, async (req, res) => {
         const updatedUser = req.body;
         const userInfo = req.user;
         if (id !== userInfo._id) {
-            return handleError(res, 403, "Authorization Error: Only the user or an admin can edit the user's profile");
+            return handleError(res, 403, "Authorization Error: Only the verified user can edit their profile");
         }
         const valErrorMessage = validateUpdate(updatedUser);
         if (valErrorMessage !== "") {
@@ -68,6 +84,22 @@ router.put("/:id", auth, async (req, res) => {
         let user = await normalizeUser(updatedUser);
         user = await updateUser(id, updatedUser);
         res.send(user);
+    }
+    catch (err) {
+        return handleError(res, 400, err.message);
+    }
+})
+
+// patch business status
+router.patch("/:id", auth, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userInfo = req.user;
+        if (id !== userInfo._id) {
+            return handleError(res, 403, "Authorization Error: Only the verified user can edit their profile");
+        }
+        let user = await patchBusinessStatus(id);
+        res.send(user)
     }
     catch (err) {
         return handleError(res, 400, err.message);

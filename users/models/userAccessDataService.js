@@ -64,4 +64,31 @@ const updateUser = async (userId, updatedUser) => {
     }
 }
 
-module.exports = { registerUser, getUser, loginUser, updateUser };
+const patchBusinessStatus = async (userId) => {
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            throw new Error("User not found");
+        }
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { $set: { isBusiness: !user.isBusiness } },
+            { new: true, runValidators: true }
+        );
+        return updatedUser;
+    } catch (err) {
+        return throwError("Mongoose", err);
+    }
+};
+
+const getUsers = async () => {
+    try {
+        let users = User.find();
+        return users;
+    }
+    catch (err) {
+        return throwError("Mongoose", err);
+    }
+}
+
+module.exports = { registerUser, getUser, loginUser, updateUser, patchBusinessStatus, getUsers };
