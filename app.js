@@ -1,6 +1,6 @@
 
 const express = require('express');
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 const Card = require('./cards/models/mongodb/Card');
 const PORT = process.env.PORT || 8181;
 const connectToDB = require('./DB/dbService');
