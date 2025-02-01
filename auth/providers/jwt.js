@@ -1,7 +1,7 @@
 jwt = require("jsonwebtoken");
 require('dotenv').config();
 
-const SECRET_WORD = process.env.SECRET_WORD;
+const JWT_SECRET = process.env.JWT_SECRET;
 
 const generateAuthToken = (user) => {
     const payload = {
@@ -9,13 +9,13 @@ const generateAuthToken = (user) => {
         isAdmin: user.isAdmin,
         isBusiness: user.isBusiness
     };
-    const token = jwt.sign(payload, SECRET_WORD);
+    const token = jwt.sign(payload, JWT_SECRET);
     return token;
 };
 
 const verifyToken = (tokenFromClient) => {
     try {
-        const payload = jwt.verify(tokenFromClient, SECRET_WORD);
+        const payload = jwt.verify(tokenFromClient, JWT_SECRET);
         return payload;
     }
     catch (error) {
