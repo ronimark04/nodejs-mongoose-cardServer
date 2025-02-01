@@ -3,7 +3,6 @@ const { generateAuthToken } = require("../../auth/providers/jwt");
 const { throwError } = require('../../utils/handleErrors');
 const { generatePassword, comparePasswords } = require('../helpers/bcrypt');
 
-
 const registerUser = async (newUser) => {
     try {
         const existingUser = await User.findOne({ email: newUser.email });
@@ -91,4 +90,14 @@ const getUsers = async () => {
     }
 }
 
-module.exports = { registerUser, getUser, loginUser, updateUser, patchBusinessStatus, getUsers };
+const deleteUser = async (userId) => {
+    try {
+        let user = await User.findByIdAndDelete(userId);
+        return user;
+    }
+    catch (err) {
+        return throwError("Mongoose", err);
+    }
+}
+
+module.exports = { registerUser, getUser, loginUser, updateUser, patchBusinessStatus, getUsers, deleteUser };

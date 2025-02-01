@@ -1,6 +1,6 @@
 const auth = require('../../auth/authService');
 const { handleError } = require('../../utils/handleErrors');
-const { registerUser, getUser, loginUser, updateUser, patchBusinessStatus, getUsers } = require('../models/userAccessDataService');
+const { registerUser, getUser, loginUser, updateUser, patchBusinessStatus, getUsers, deleteUser } = require('../models/userAccessDataService');
 const express = require('express');
 const validateLogin = require('../validation/joi/loginValidation');
 const validateRegistration = require('../validation/joi/registerValidation');
@@ -104,6 +104,23 @@ router.patch("/:id", auth, async (req, res) => {
     catch (err) {
         return handleError(res, 400, err.message);
     }
+})
+
+// delete user
+router.delete("/:id", auth, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userInfo = req.user;
+        if (id !== userInfo._id && !userInfo.isAdmin) {
+            return handleError(res, 403, "Authorization Error: Only an admin or the verified user can delete their profile");
+        }
+        const user = await deleteUser(id);
+        res.send(user);
+    }
+    catch (err) {
+        return handleError(res, 400, err.message);
+    }
+
 })
 
 module.exports = router;
