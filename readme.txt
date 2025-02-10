@@ -3,7 +3,7 @@ This is my final project for the backend portion of a full stack web development
 
 IMPORTANT: 
 - Please add the .env file in the attached zip to the main directory.
-- Type 'nodemon app' in the command line to run locally and 'npm start' to run in Atlas.
+- Type 'nodemon app' in the command line to run locally and 'npm start' to run in Atlas (Atlas connection string can be found in the .env file).
 
 Features
 
