@@ -43,13 +43,13 @@ router.get("/:id", async (req, res) => {
 // create new card
 router.post("/", auth, async (req, res) => {
     try {
-        const userInfo = req.user; //taken from the auth function in authService.js. I think this is the verified token that contains the relevant user info (isAdmin, isBusiness, etc.)
-        if (!userInfo.isBusiness) { // if user is not a business user
-            return handleError(res, 403, "Non business users cannot create cards");
+        const userInfo = req.user;
+        if (!userInfo.isBusiness) {
+            return handleError(res, 403, "Error: Non business users cannot create cards");
         }
         const { valErrorMessage } = validateCard(req.body);
         if (valErrorMessage !== "") {
-            return handleError(res, 400, "Validation Error:" + valErrorMessage);
+            return handleError(res, 400, "Validation Error: " + valErrorMessage);
         }
         let card = await normalizeCard(req.body, userInfo._id);
         card = await createCard(card);

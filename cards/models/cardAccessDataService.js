@@ -1,4 +1,3 @@
-const { throwError } = require('../../utils/handleErrors');
 const Card = require('./mongodb/Card');
 
 const getCards = async () => {
@@ -7,7 +6,7 @@ const getCards = async () => {
         return cards;
     }
     catch (err) {
-        return throwError("Mongoose", err);
+        throw err;
     }
 };
 
@@ -17,7 +16,7 @@ const getCard = async (cardId) => {
         return card;
     }
     catch (err) {
-        return throwError("Mongoose", err);
+        throw err;
     }
 };
 
@@ -27,7 +26,7 @@ const getMyCards = async (userId) => {
         return cards;
     }
     catch (err) {
-        return throwError("Mongoose", err);
+        throw err;
     }
 };
 
@@ -37,39 +36,39 @@ const createCard = async (newCard) => {
         card = await card.save();
         return card;
     } catch (error) {
-        return throwError("Mongoose", error);
+        throw err;
     }
 };
 
 const updateCard = async (cardId, newCard) => {
     try {
-        let card = await Card.findByIdAndUpdate(cardId, newCard, { new: true }); // new: true returns the updated document instead of the default old one
+        let card = await Card.findByIdAndUpdate(cardId, newCard, { new: true });
         return card;
     }
     catch (err) {
-        return throwError("Mongoose", err);
+        throw err;
     }
 };
 
 const likeCard = async (cardId, userId) => {
     try {
         let card = await Card.findById(cardId);
-        if (!card) { // if the card is not found in the database, throw an error
-            const error = new Error("Card not found in database");
+        if (!card) {
+            const error = new Error("Error: Card not found in database");
             error.status = 404;
-            return throwError("Mongoose", error);
+            throw error;
         };
-        if (card.likes.includes(userId)) { //if the user has already liked the card, remove the like
+        if (card.likes.includes(userId)) {
             let newLikesArray = card.likes.filter(id => id !== userId);
             card.likes = newLikesArray;
-        } else { // if the user has not liked the card, add the like
+        } else {
             card.likes.push(userId);
         }
         await card.save();
         return card;
     }
     catch (err) {
-        throw new Error("Mongoose: " + err.message);
+        throw err;
     }
 };
 
@@ -79,7 +78,7 @@ const deleteCard = async (cardId) => {
         return card;
     }
     catch (err) {
-        throw new Error("Mongoose: " + err.message);
+        throw err;
     }
 };
 

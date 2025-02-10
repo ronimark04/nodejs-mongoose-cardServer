@@ -22,7 +22,7 @@ app.use(corsMiddleware);
 app.use(router); // this line must be last before app.listen, apart from error handling middleware
 
 async function seedDatabase() {
-    const seedUsers = await generateSeedUsers(); // Wait for users to be generated
+    const seedUsers = await generateSeedUsers();
     await User.insertMany(seedUsers);
     await Card.insertMany(seedCards);
 }
@@ -34,7 +34,5 @@ app.listen(PORT, async () => {
     const dbCards = await Card.find({});
     if (dbUsers.length === 0 && dbCards.length === 0) {
         seedDatabase();
-        console.log("Databse seeded");
     }
-
 });

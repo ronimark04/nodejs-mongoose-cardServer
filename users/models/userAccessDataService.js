@@ -1,15 +1,14 @@
 const User = require('./mongodb/User');
 const { generateAuthToken } = require("../../auth/providers/jwt");
-const { throwError } = require('../../utils/handleErrors');
 const { generatePassword, comparePasswords } = require('../helpers/bcrypt');
 
 const registerUser = async (newUser) => {
     try {
         const existingUser = await User.findOne({ email: newUser.email });
         if (existingUser) {
-            const error = new Error("User already exists, please login");
+            const error = new Error("Error: User already exists, please login");
             error.status = 400;
-            return throwError("MongoDB", error);
+            throw error;
         }
         newUser.password = await generatePassword(newUser.password);
         let user = new User(newUser);
@@ -17,7 +16,7 @@ const registerUser = async (newUser) => {
         lessInfoUser = { email: user.email, name: user.name, _id: user._id };
         return lessInfoUser;
     } catch (error) {
-        return throwError("Mongoose", error);
+        throw error;
     }
 };
 
@@ -28,7 +27,7 @@ const getUser = async (userId) => {
         return user;
     }
     catch (err) {
-        return throwError("Mongoose", err);
+        throw err;
     }
 };
 
@@ -36,21 +35,21 @@ const loginUser = async (email, password) => {
     try {
         const userFromDB = await User.findOne({ email: email });
         if (!userFromDB) {
-            const error = new Error("User not found. Please register");
+            const error = new Error("Error: User not found. Please register");
             error.status = 401;
-            return throwError("Authentication", error);
+            throw error;
         }
         const isPasswordCorrect = await comparePasswords(password, userFromDB.password);
         if (!isPasswordCorrect) {
-            const error = new Error("Password incorrect");
+            const error = new Error("Error: Password incorrect");
             error.status = 401;
-            return throwError("Authentication", error);
+            throw error;
         }
         const token = await generateAuthToken(userFromDB);
         return token;
     }
     catch (err) {
-        throwError("Mongoose", err);
+        throw err;
     }
 }
 
@@ -59,7 +58,7 @@ const updateUser = async (userId, updatedUser) => {
         let user = await User.findByIdAndUpdate(userId, updatedUser, { new: true });
         return user;
     } catch (err) {
-        return throwError("Mongoose", err);
+        throw err;
     }
 }
 
@@ -76,7 +75,7 @@ const patchBusinessStatus = async (userId) => {
         );
         return updatedUser;
     } catch (err) {
-        return throwError("Mongoose", err);
+        throw err;
     }
 };
 
@@ -86,7 +85,7 @@ const getUsers = async () => {
         return users;
     }
     catch (err) {
-        return throwError("Mongoose", err);
+        throw err;
     }
 }
 
@@ -96,7 +95,7 @@ const deleteUser = async (userId) => {
         return user;
     }
     catch (err) {
-        return throwError("Mongoose", err);
+        throw err;
     }
 }
 

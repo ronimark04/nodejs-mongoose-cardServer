@@ -4,8 +4,11 @@ const { URL, DEFAULT_VALIDATION } = require("./mongooseValidators");
 const image = new mongoose.Schema({
     url: URL,
     alt: {
-        ...DEFAULT_VALIDATION,
-        required: false
+        type: String,
+        required: false,
+        maxLength: 256,
+        trim: true,
+        lowercase: true,
     }
 });
 

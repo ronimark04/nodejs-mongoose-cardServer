@@ -13,9 +13,10 @@ router.post("/", async (req, res) => {
     try {
         const validateErrorMessage = validateRegistration(req.body);
         if (validateErrorMessage !== "") {
-            return handleError(res, 400, "Validation " + validateErrorMessage);
+            return handleError(res, 400, "Validation Error: " + validateErrorMessage);
         }
-        let user = await registerUser(req.body);
+        let user = await normalizeUser(req.body);
+        user = await registerUser(user);
         res.send(user);
     } catch (error) {
         handleError(res, error.status || 400, error.message);
@@ -43,7 +44,7 @@ router.post("/login", async (req, res) => {
     try {
         const validateErrorMessage = validateLogin(req.body);
         if (validateErrorMessage !== "") {
-            return handleError(res, 400, "Validation" + validateErrorMessage);
+            return handleError(res, 400, "Validation Error: " + validateErrorMessage);
         }
         let { email, password } = req.body;
         const token = await loginUser(email, password);

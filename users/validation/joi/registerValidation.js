@@ -56,6 +56,8 @@ const registerValidation = (user) => {
 
 const validateRegistration = (user) => {
     const { error } = registerValidation(user);
+    console.log(error);
+
     if (error) return error.details[0].message;
     return "";
 };
