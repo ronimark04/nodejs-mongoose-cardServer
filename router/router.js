@@ -8,7 +8,7 @@ router.use("/cards", cardsRouterController);
 router.use("/users", userRouterController);
 
 router.use((req, res) => {
-    handleError(res, 404, "Path Not found");
+    handleError(res, 404, "Error: Path Not found");
 })
 
 module.exports = router;

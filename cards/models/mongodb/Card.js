@@ -22,7 +22,7 @@ const cardSchema = new mongoose.Schema({
         min: 1_000_000,
         max: 9_999_999
     },
-    likes: [String], // an array of strings
+    likes: [String],
     createdAt: {
         type: Date,
         default: Date.now

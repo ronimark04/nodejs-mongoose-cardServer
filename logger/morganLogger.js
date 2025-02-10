@@ -21,6 +21,5 @@ const morganLogger = morgan(function (tokens, req, res) {
         return chalk.cyanBright(message);
     }
 });
-// "[YYYY/MM/DD HH:MM:SS]" method url status response - time "ms"
 
 module.exports = morganLogger;

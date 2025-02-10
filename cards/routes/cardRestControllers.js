@@ -103,7 +103,7 @@ router.delete("/:id", auth, async (req, res) => {
         let { id } = req.params;
         const userInfo = req.user;
         const originalCard = await getCard(id);
-        const { bizNumber } = req.body;
+        const { bizNumber } = req.body; // DELETING A CARD REQUIRED THE bizNumber IN ACCORDANCE WITH THE REACT PROJECT!
         const userId = originalCard.user_id.toString();
 
         if (userInfo._id != userId && !userInfo.isAdmin) {
