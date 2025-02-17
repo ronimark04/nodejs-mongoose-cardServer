@@ -27,7 +27,6 @@ router.post("/", async (req, res) => {
 router.get("/", auth, async (req, res) => {
     try {
         const userInfo = req.user;
-        console.log(userInfo.isAdmin);
         if (!userInfo.isAdmin) {
             handleError(res, 403, "Authorization Error: Non admin users are not authorized to access this information");
         }
